@@ -1,15 +1,10 @@
 from rest_framework import serializers 
-from app.models import Product, User
+from app.models import Product, User, Cart, Category, Order
 
 class ProductSerializer(serializers.ModelSerializer):
   class Meta:
     model = Product
-    fields = ('id',
-              'name',
-              'photo',
-              'price',
-              'description',
-              'stock_quantity')
+    fields = '__all__'
     
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
@@ -19,4 +14,20 @@ class UserSerializer(serializers.ModelSerializer):
       'username',
       'password',
     )
+    
+class CardSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Cart
+    fields = '__all__'
+    
+class OrderSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Order
+    fields = '__all__'
+    
+
+class CategorySerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Category
+    fields = '__all__'
       
