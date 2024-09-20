@@ -10,5 +10,8 @@ urlpatterns = [
   path('photo', views.upload_photo),
   path('cart/<str:id>', views.cart),
   path('category', views.category),
-  path('category/<str:id>', views.category_detail)
+  path('category/<str:id>', views.category_detail),
+  path('order', views.get_all_order),
+  path('order/<str:id>', views.order),
+  
 ]

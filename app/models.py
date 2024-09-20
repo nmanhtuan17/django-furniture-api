@@ -25,10 +25,11 @@ class Cart(models.Model):
   
 
 class Order(models.Model):
-  product = models.TextField()
-  user = models.TextField()
-  status = models.TextField()
-  payment = models.BooleanField()
+  products = models.JSONField()
+  user = models.TextField(blank=True)
+  username = models.TextField()
+  status = models.TextField(blank=True)
+  payment = models.BooleanField(blank=True)
   address = models.TextField()
   total = models.PositiveIntegerField()
   phone = models.PositiveIntegerField()

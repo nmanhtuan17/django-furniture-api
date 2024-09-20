@@ -12,6 +12,7 @@ from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from app.utils import serialize_mongo_document, hash_password, check_password, upload_image
 from bson import ObjectId
+from . import type
 
 client = MongoClient('mongodb+srv://tuanmnguye:Ob47mBLkGbWhXuUL@django.oi103.mongodb.net/?retryWrites=true&w=majority&appName=django')
 dbname = client['django']
@@ -158,7 +159,48 @@ def cart(request, id):
       return JsonResponse({'message': 'Delete cart fail'}, status=status.HTTP_400_BAD_REQUEST) 
 
 ## ORDER
-
+@api_view(['GET', 'PUT'])
+def get_all_order(request):
+  if request.method == 'GET':
+    orders = list(order_collection.find({}))
+    serialized_documents = [serialize_mongo_document(doc) for doc in orders]
+    return JsonResponse(orders, status=status.HTTP_200_OK, safe=False)
+  elif request.method == 'PUT':
+    try:
+      payload = JSONParser().parse(request)
+      print(payload)
+      orderId = request.query_params.get('orderId')
+      print(orderId)
+      updated = order_collection.find_one_and_update({'_id': ObjectId(orderId)}, {'$set': payload}, return_document=ReturnDocument.AFTER)
+      return JsonResponse(serialize_mongo_document(updated), status=status.HTTP_200_OK, safe=False)
+    except Exception as error:
+      pass
+    
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def order(request, id):
+  if request.method == 'GET':
+    orders = list(order_collection.find({'user': id}))
+    serialized_documents = [serialize_mongo_document(doc) for doc in orders]
+    return JsonResponse(orders, status=status.HTTP_200_OK, safe=False)
+  elif request.method == 'POST':
+    payload = JSONParser().parse(request)
+    serialize = OrderSerializer(data=payload)
+    if serialize.is_valid():
+      print(serialize.data)
+      order_collection.insert_one({
+        **serialize.data,
+        'user': id,
+        'status': type.PENDING,
+        'payment': True,
+      })
+      cart_collection.delete_many({'user': id})
+      return JsonResponse(serialize.data, status=status.HTTP_201_CREATED, safe=False)
+    return JsonResponse(serialize.errors, status=status.HTTP_400_BAD_REQUEST)
+  elif request.method == 'DELETE':
+    orderId = request.query_params.get('orderId')
+    order_collection.find_one_and_delete({'_id': ObjectId(orderId)})
+    return JsonResponse({}, status=status.HTTP_200_OK, safe=False)
+      
 
 ## CATEGORY
 @api_view(['GET', 'POST'])
