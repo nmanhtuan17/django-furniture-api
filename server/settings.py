@@ -33,7 +33,7 @@ SECRET_KEY = "django-insecure-79w_c_n(v@ta8jrwp!-rz0wi&ll$m#k8ocujnb+r8vemuc5@tm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['django-furniture-api.onrender.com']
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
